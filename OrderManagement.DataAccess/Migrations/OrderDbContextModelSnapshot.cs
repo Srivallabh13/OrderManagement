@@ -42,6 +42,9 @@ namespace OrderManagement.DataAccess.Migrations
                     b.Property<string>("Products")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustId");

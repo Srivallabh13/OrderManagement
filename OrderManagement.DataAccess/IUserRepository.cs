@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OrderManagement.DataAccess
 {
-    public interface IOrderRepository
-    {    
+    internal interface IUserRepository
+    {
     }
 }

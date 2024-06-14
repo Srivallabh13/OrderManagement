@@ -12,8 +12,8 @@ using OrderManagement.DataAccess;
 namespace OrderManagement.DataAccess.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20240614065341_init")]
-    partial class init
+    [Migration("20240614103417_inita")]
+    partial class inita
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,9 @@ namespace OrderManagement.DataAccess.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Products")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
