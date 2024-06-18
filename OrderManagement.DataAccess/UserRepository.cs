@@ -51,6 +51,12 @@ namespace OrderManagement.DataAccess
 
         }
 
+        public async Task<IEnumerable<Order>> GetOrdersByUserAsync(int userId)
+        {
+            User user = _context.Users.Find(userId);
+            return user.Orders;
+        }
+
         public async Task UpdateAsync(User user)
         {
             _context.Users.Update(user);

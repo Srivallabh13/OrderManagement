@@ -1,6 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using OrderManagement.ApplicationLayer.MediatR;
 using OrderManagement.DataAccess;
+using System.Collections.Generic;
 
 namespace OrderManagement.API
 {
@@ -20,7 +23,10 @@ namespace OrderManagement.API
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrder.Handler).Assembly));
+            //builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 
+            //builder.Services.AddHostedService<OrderStatusUpdateService>();
             var app = builder.Build();
 
 

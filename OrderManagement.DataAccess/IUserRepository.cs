@@ -11,9 +11,11 @@ namespace OrderManagement.DataAccess
     {
         Task<User> AddAsync(User user);
         Task<User> GetByIdAsync(int userId);
+        Task<IEnumerable<Order>> GetOrdersByUserAsync(int userId);
+       
         Task UpdateAsync(User user);                      // Update
         Task DeleteAsync(int userId);                     // Delete
         Task<IEnumerable<User>> GetAllAsync();            // Read
-        Task<User> GetByEmailAsync(string email);         // Read by emai
+        Task<User> GetByEmailAsync(string email);         // Read by email
     }
 }

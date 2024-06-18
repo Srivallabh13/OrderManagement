@@ -24,10 +24,27 @@ namespace OrderManagement.DataAccess
             return order;
         }
 
+        public async Task DeleteAsync(int orderId)
+        {
+            Order o = await _context.Orders.FindAsync(orderId);
+            if (o != null)
+            {
+                _context.Orders.Remove(o);
+                _context.SaveChanges();
+            }
+        }
+
         public async Task<IEnumerable<Order>> GetAllAsync()
         {
             return await _context.Orders.ToListAsync();
 
+        }
+
+        public async Task<List<int>> GetAllOrderIdsAsync()
+        {
+            return await _context.Orders
+                                 .Select(o=> o.Id)
+                                 .ToListAsync();
         }
 
         public async Task<Order> GetByIdAsync(int orderId)
@@ -35,8 +52,9 @@ namespace OrderManagement.DataAccess
             return await _context.Orders.FindAsync(orderId);
         }
 
-        public async Task UpdateAsync(Order order)
+        public async Task UpdateAsync(int orderId)
         {
+            Order order = await _context.Orders.FindAsync(orderId);
              _context.Orders.Update(order);
             await _context.SaveChangesAsync();
            

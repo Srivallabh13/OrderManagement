@@ -11,7 +11,9 @@ namespace OrderManagement.DataAccess
     {
         Task<Order> AddAsync(Order order);
         Task<Order> GetByIdAsync(int orderId);
-        Task UpdateAsync(Order order);
+        Task UpdateAsync(int orderId);
+        Task DeleteAsync(int orderId);
         Task<IEnumerable<Order>> GetAllAsync();
+        Task<List<int>> GetAllOrderIdsAsync();
     }
 }
