@@ -1,4 +1,6 @@
-﻿using OrderManagement.DataAccess;
+﻿using OrderManagement.DataAccess.Email;
+using OrderManagement.DataAccess.OrderRepo;
+using OrderManagement.DataAccess.UserRepo;
 using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
 
@@ -7,10 +9,12 @@ namespace OrderManagement.ApplicationLayer
     public class OrderService : IOrderService
     {
         private readonly OrderRepository _orderRepository;
+        private readonly EmailSender emailSender;
 
-        public OrderService(OrderRepository orderRepo, UserRepository userRepository)
+        public OrderService(OrderRepository orderRepo, EmailSender emailSender)
         {
             _orderRepository = orderRepo;
+            this.emailSender = emailSender;
         }
         public async Task<Order> CreateOrderAsync(OrderDTO _order)
         {
@@ -18,6 +22,7 @@ namespace OrderManagement.ApplicationLayer
             User user = await _orderRepository.GetUserAsync(_order.CustId);
             if(user != null)
             {
+                // Product Inventroy code.
                 Order order = new Order
                 {
                     Id = _order.Id,
@@ -39,6 +44,9 @@ namespace OrderManagement.ApplicationLayer
                 order.User.Orders.Add(order);
                 await _orderRepository.AddAsync(order);
 
+                //email service 
+                string message = "Thank you for ordering from our platform, Your order is confirmed!";
+                await emailSender.SendEmailAsync(user.Email, "Order Confirmed", message);
                 return order;
             }
             //create an order

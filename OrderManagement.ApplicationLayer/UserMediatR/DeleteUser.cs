@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Identity.Client;
-using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.UserRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

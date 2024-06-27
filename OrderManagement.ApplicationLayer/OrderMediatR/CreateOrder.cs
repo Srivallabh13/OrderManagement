@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
 
@@ -31,9 +32,9 @@ namespace OrderManagement.ApplicationLayer.MediatR
                 //{
                 //    throw new InvalidOperationException("Product is not available in the required quantity.");
                 var createdOrder = await _orderService.CreateOrderAsync(request.Order);
+
                 //await _inventoryService.UpdateStockAsync(order.ProductName, -order.Quantity);
                 //await _emailService.SendOrderConfirmationAsync(createdOrder);
-
                 return createdOrder;
             }
         }

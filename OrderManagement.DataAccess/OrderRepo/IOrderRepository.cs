@@ -1,5 +1,5 @@
 ﻿using OrderManagement.DomainLayer.Entities;
-namespace OrderManagement.DataAccess
+namespace OrderManagement.DataAccess.OrderRepo
 {
     public interface IOrderRepository
     {

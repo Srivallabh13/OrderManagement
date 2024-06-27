@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.UserRepo;
 using OrderManagement.DomainLayer.Entities;
 using System;
 using System.Collections.Generic;

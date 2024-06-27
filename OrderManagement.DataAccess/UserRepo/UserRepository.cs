@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderManagement.DomainLayer.Entities;
 
-namespace OrderManagement.DataAccess
+namespace OrderManagement.DataAccess.UserRepo
 {
     public class UserRepository : IUserRepository
     {

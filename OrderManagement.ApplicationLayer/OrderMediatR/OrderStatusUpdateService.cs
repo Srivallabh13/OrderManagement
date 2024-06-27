@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Hosting;
-using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.OrderRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

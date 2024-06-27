@@ -31,6 +31,14 @@ namespace OrderManagement.API.Controllers
         {
             return await _mediator.Send(new GetOrderById.Query(id));
         }
+        
+        [HttpGet]
+        [Route("track/{id}")]
+        public async Task<Order> GetDeliveryStatus(Guid id)
+        {
+            await _mediator.Send(new UpdateOrderStatusById.Command(id));
+            return await GetById(id);
+        }
         [HttpGet]
         [Route("user/{userId}")]
         public async Task<IEnumerable<Order>> GetByUser(string userId)

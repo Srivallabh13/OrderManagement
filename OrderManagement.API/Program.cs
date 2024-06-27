@@ -7,6 +7,9 @@ using OrderManagement.ApplicationLayer;
 using OrderManagement.ApplicationLayer.MediatR;
 using OrderManagement.ApplicationLayer.UserMediatR;
 using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.Email;
+using OrderManagement.DataAccess.OrderRepo;
+using OrderManagement.DataAccess.UserRepo;
 using System.Reflection;
 
 namespace OrderManagement.API
@@ -29,6 +32,7 @@ namespace OrderManagement.API
                  {
                      options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                  });
+            builder.Services.AddTransient<EmailSender>();
             builder.Services.AddAuthentication();
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityService(builder.Configuration);
@@ -53,7 +57,8 @@ namespace OrderManagement.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseRouting(); 
+            app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

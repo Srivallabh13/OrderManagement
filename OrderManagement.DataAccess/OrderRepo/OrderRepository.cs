@@ -1,6 +1,6 @@
 ﻿using OrderManagement.DomainLayer.Entities;
 
-namespace OrderManagement.DataAccess
+namespace OrderManagement.DataAccess.OrderRepo
 {
     public class OrderRepository : IOrderRepository
     {
@@ -18,9 +18,18 @@ namespace OrderManagement.DataAccess
             return order;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            Order order = await _context.Orders.FindAsync(id);
+            if (order != null)
+            {
+                _context.Remove(order);
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Order Not found");
+            }
         }
 
         public async Task<IEnumerable<Order>> GetAllAsync()
@@ -54,7 +63,7 @@ namespace OrderManagement.DataAccess
         {
             // correct implementation left..
             Order order = await _context.Orders.FindAsync(orderId);
-             _context.Orders.Update(order);
+            _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
 
