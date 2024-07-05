@@ -1,9 +1,16 @@
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using OrderManagement.API.Extensions;
+using OrderManagement.ApplicationLayer;
 using OrderManagement.ApplicationLayer.MediatR;
+using OrderManagement.ApplicationLayer.UserMediatR;
 using OrderManagement.DataAccess;
-using System.Collections.Generic;
+using OrderManagement.DataAccess.Email;
+using OrderManagement.DataAccess.OrderRepo;
+using OrderManagement.DataAccess.UserRepo;
+using System.Reflection;
 
 namespace OrderManagement.API
 {
@@ -15,20 +22,34 @@ namespace OrderManagement.API
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(opt=>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            });
+            builder.Services.AddTransient<EmailSender>();
+            builder.Services.AddAuthentication();
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityService(builder.Configuration);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<OrderDbContext>( opt =>
+
+            builder.Services.AddDbContext<OrderDbContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrder.Handler).Assembly));
-            //builder.Services.AddTransient<IOrderRepository, OrderRepository>();
-
-            //builder.Services.AddHostedService<OrderStatusUpdateService>();
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(GetAllOrders).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(GetAllUsers).Assembly));
+            //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            builder.Services.AddTransient<OrderService>();
+            builder.Services.AddTransient<OrderRepository>();
+            builder.Services.AddTransient<UserRepository>();
             var app = builder.Build();
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -36,7 +57,8 @@ namespace OrderManagement.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseRouting(); 
+            app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
