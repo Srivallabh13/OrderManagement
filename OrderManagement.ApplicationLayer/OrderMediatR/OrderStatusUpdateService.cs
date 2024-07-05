@@ -18,20 +18,20 @@ namespace OrderManagement.ApplicationLayer.MediatR
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await Task.Delay(_updateInterval, stoppingToken);
+            //while (!stoppingToken.IsCancellationRequested)
+            //{
+            //    await Task.Delay(_updateInterval, stoppingToken);
 
-                // Fetch all order IDs that need status update (if any filtering logic is required)
-                var allOrderIds = await _orderRepository.GetAllOrderIdsAsync();
+            //    // Fetch all order IDs that need status update (if any filtering logic is required)
+            //    var allOrderIds = await _orderRepository.GetAllOrderIdsAsync();
 
-                // Process each order to update its status
-                foreach (var orderId in allOrderIds)
-                {
-                    var command = new UpdateOrderStatusById.Command(orderId,"");
-                    await _mediator.Send(command, stoppingToken);
-                }
-            }
+            //    // Process each order to update its status
+            //    foreach (var orderId in allOrderIds)
+            //    {
+            //        var command = new UpdateOrderStatusById.Command(orderId,"");
+            //        await _mediator.Send(command, stoppingToken);
+            //    }
+            //}
         }
     }
 }

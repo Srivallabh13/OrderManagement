@@ -21,7 +21,7 @@ namespace OrderManagement.ApplicationLayer
         {
             //validate the user details and product availability
             User user = await _orderRepository.GetUserAsync(_order.CustId);
-            if(user != null)
+            if (user != null)
             {
                 // Product Inventroy code.
                 Order order = new Order
@@ -33,11 +33,12 @@ namespace OrderManagement.ApplicationLayer
                     Date = DateTime.Now,
                     User = user
                 };
-                if(order.Products == null)
+                if (order.Products == null)
                 {
                     order.Products = new List<OrderProduct>();
-                    _order.Products.ForEach(prod => {
-                    
+                    _order.Products.ForEach(prod =>
+                    {
+
                         OrderProduct orderProduct = new OrderProduct
                         {
                             Id = _order.Id,
@@ -90,11 +91,15 @@ namespace OrderManagement.ApplicationLayer
         public async Task<IEnumerable<Order>> GetOrdersByUserAsync(string userId)
         {
             IEnumerable<Order> orders = await _orderRepository.GetAllAsync();
-            
-            return orders.Where(order=> order.CustId == userId);
+
+            return orders.Where(order => order.CustId == userId);
         }
 
         public async Task UpdateOrderStatusById(Guid id, string status)
-    {
+        {
+            await _orderRepository.UpdateAsync(id, status);
+        }
     }
+
+
 }
