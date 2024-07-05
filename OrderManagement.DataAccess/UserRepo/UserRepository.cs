@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
 
 namespace OrderManagement.DataAccess.UserRepo
@@ -40,10 +41,35 @@ namespace OrderManagement.DataAccess.UserRepo
 
         }
 
-        public async Task UpdateAsync(User user)
+        public async Task<User> UpdateAsync(string id, UpdateUserDTO user)
         {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            User UserToUpdate = await GetByIdAsync(id);
+            if (UserToUpdate != null)
+            {
+                if(user.Address!=null && user.Address.Length>0)
+                    UserToUpdate.Address = user.Address;
+                if(user.PinCode!=0 && user.PinCode>0)
+                    UserToUpdate.PinCode = user.PinCode;
+                if(user.PhoneNumber != null && user.PhoneNumber.Length > 0)
+                    UserToUpdate.PhoneNumber = user.PhoneNumber;
+                if(user.UserName != null && user.UserName.Length > 0)
+                    UserToUpdate.UserName = user.UserName;
+                if(user.ImageUrl != null && user.ImageUrl.Length > 0)
+                    UserToUpdate.ImageUrl = user.ImageUrl;
+                if(user.City != null && user.City.Length > 0)
+                    UserToUpdate.City = user.City;
+                if(user.FullName != null && user.FullName.Length > 0 )
+                    UserToUpdate.FullName = user.FullName;
+
+
+                _context.Users.Update(UserToUpdate);
+                await _context.SaveChangesAsync();
+                return UserToUpdate;
+            }
+            else
+            {
+                throw new Exception("No User Found");
+            }
         }
     }
 }
