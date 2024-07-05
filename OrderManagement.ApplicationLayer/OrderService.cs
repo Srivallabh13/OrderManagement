@@ -95,8 +95,6 @@ namespace OrderManagement.ApplicationLayer
         }
 
         public async Task UpdateOrderStatusById(Guid id, string status)
-        {
-            await _orderRepository.UpdateAsync(id, status);
-        }
+    {
     }
 }
