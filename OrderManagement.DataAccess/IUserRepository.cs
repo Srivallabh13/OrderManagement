@@ -1,9 +1,4 @@
-﻿using OrderManagement.DomainLayer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OrderManagement.DomainLayer.Entities;
 
 namespace OrderManagement.DataAccess
 {
