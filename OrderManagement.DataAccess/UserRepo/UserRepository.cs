@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderManagement.DomainLayer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OrderManagement.DomainLayer.Entities;
 
-namespace OrderManagement.DataAccess
+namespace OrderManagement.DataAccess.UserRepo
 {
     public class UserRepository : IUserRepository
     {
@@ -15,25 +10,20 @@ namespace OrderManagement.DataAccess
         {
             _context = db;
         }
-        public async Task<User> AddAsync(User user)
+        public UserRepository() { }
+        public async Task DeleteAsync(string userId)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-            return user;
-            
-        }
-
-        public async Task DeleteAsync(int userId)
-        {
-           User user= await _context.Users.FindAsync(userId);
-            if (user == null)
+            User user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+            }
+            else
             {
                 throw new KeyNotFoundException($"User with ID {userId} not found.");
             }
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
         }
-
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
@@ -42,10 +32,9 @@ namespace OrderManagement.DataAccess
         public async Task<User> GetByEmailAsync(string email)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
-
         }
 
-        public async Task<User> GetByIdAsync(int userId)
+        public async Task<User> GetByIdAsync(string userId)
         {
             return await _context.Users.FindAsync(userId);
 
