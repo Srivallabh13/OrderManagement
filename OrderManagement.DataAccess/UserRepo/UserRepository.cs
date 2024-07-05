@@ -11,13 +11,6 @@ namespace OrderManagement.DataAccess.UserRepo
             _context = db;
         }
         public UserRepository() { }
-        public async Task<User> AddAsync(User user)
-        {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-            return user;
-        }
-
         public async Task DeleteAsync(string userId)
         {
             User user = await _context.Users.FindAsync(userId);
@@ -31,7 +24,6 @@ namespace OrderManagement.DataAccess.UserRepo
                 throw new KeyNotFoundException($"User with ID {userId} not found.");
             }
         }
-
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();

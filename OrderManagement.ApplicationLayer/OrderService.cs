@@ -1,4 +1,5 @@
-﻿using OrderManagement.DataAccess.Email;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using OrderManagement.DataAccess.Email;
 using OrderManagement.DataAccess.OrderRepo;
 using OrderManagement.DataAccess.UserRepo;
 using OrderManagement.DomainLayer.DTO;
@@ -27,15 +28,24 @@ namespace OrderManagement.ApplicationLayer
                 {
                     Id = _order.Id,
                     CustId = _order.CustId,
-                    Products = _order.Products,
                     Status = "Confirmed",
                     Price = _order.Price,
                     Date = DateTime.Now,
+                    User = user
                 };
-                if(order.User == null)
+                if(order.Products == null)
                 {
-                    order.User = new User();
-                    order.User = user;
+                    order.Products = new List<OrderProduct>();
+                    _order.Products.ForEach(prod => {
+                    
+                        OrderProduct orderProduct = new OrderProduct
+                        {
+                            Id = _order.Id,
+                            Quantity = prod.Quantity,
+                            ProductId = prod.Id
+                        };
+                        order.Products.Add(orderProduct);
+                    });
                 }
                 if (order.User.Orders == null)
                 {
@@ -47,10 +57,13 @@ namespace OrderManagement.ApplicationLayer
                 //email service 
                 string message = "Thank you for ordering from our platform, Your order is confirmed!";
                 await emailSender.SendEmailAsync(user.Email, "Order Confirmed", message);
+                //create an order
                 return order;
             }
-            //create an order
+            else
+            {
                 throw new ArgumentException("User does not exist.");
+            }
         }
 
         public async Task DeleteOrderByIdAsync(Guid id)
@@ -81,9 +94,9 @@ namespace OrderManagement.ApplicationLayer
             return orders.Where(order=> order.CustId == userId);
         }
 
-        public async Task UpdateOrderStatusById(Guid id)
+        public async Task UpdateOrderStatusById(Guid id, string status)
         {
-            await _orderRepository.UpdateAsync(id);
+            await _orderRepository.UpdateAsync(id, status);
         }
     }
 }

@@ -33,13 +33,6 @@ namespace OrderManagement.API.Controllers
         }
         
         [HttpGet]
-        [Route("track/{id}")]
-        public async Task<Order> GetDeliveryStatus(Guid id)
-        {
-            await _mediator.Send(new UpdateOrderStatusById.Command(id));
-            return await GetById(id);
-        }
-        [HttpGet]
         [Route("user/{userId}")]
         public async Task<IEnumerable<Order>> GetByUser(string userId)
         {
@@ -62,9 +55,9 @@ namespace OrderManagement.API.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public async Task<Unit> Update(Guid id)
+        public async Task<Unit> Update(Guid id, string status)
         {
-            return await _mediator.Send(new UpdateOrderStatusById.Command(id));
+            return await _mediator.Send(new UpdateOrderStatusById.Command(id, status));
         }
     }
 }

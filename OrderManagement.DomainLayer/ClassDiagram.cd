@@ -1,20 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="OrderManagement.DomainLayer.Order">
-    <Position X="8" Y="1.5" Width="1.5" />
+  <Class Name="OrderManagement.DomainLayer.Entities.Order">
+    <Position X="2.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAADAAAAAQAAAAAAAAAAAAAAAAAAAAABAAACAAAAAAQ=</HashCode>
-      <FileName>Order.cs</FileName>
+      <HashCode>AAADAAAEAQAAAAAAAAAAAAAAAAAAAAABAAACAAAAAAQ=</HashCode>
+      <FileName>Entities\Order.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="User" />
     </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Products" />
+    </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="OrderManagement.DomainLayer.User">
-    <Position X="4" Y="1.5" Width="1.5" />
+  <Class Name="OrderManagement.DomainLayer.Entities.OrderProduct">
+    <Position X="4.5" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAECQAAAAGAAAAAIAAAAQAQAAAAAAAACAAAAACAAAAA=</HashCode>
-      <FileName>User.cs</FileName>
+      <HashCode>EAECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Entities\OrderProduct.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Order" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OrderManagement.DomainLayer.Entities.User">
+    <Position X="5.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAQAAAAEAAAIAIAAAAAAAAAAAAAAACAAAAACAAAAA=</HashCode>
+      <FileName>Entities\User.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Orders" />

@@ -30,12 +30,6 @@ namespace OrderManagement.API.Controllers
             return await _mediator.Send(new GetUserById.Query(id));
         }
 
-        [HttpPost]
-        [Route("create")]
-        public async Task<User> Create(User user) 
-        {
-            return await _mediator.Send(new CreateUser.Command(user));
-        }
         [HttpPut]
         [Route("update")]
         public async Task<Unit> Update(User user)

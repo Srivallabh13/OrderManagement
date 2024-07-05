@@ -1,11 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Hosting;
 using OrderManagement.DataAccess.OrderRepo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OrderManagement.ApplicationLayer.MediatR
 {
@@ -33,7 +28,7 @@ namespace OrderManagement.ApplicationLayer.MediatR
                 // Process each order to update its status
                 foreach (var orderId in allOrderIds)
                 {
-                    var command = new UpdateOrderStatusById.Command(orderId);
+                    var command = new UpdateOrderStatusById.Command(orderId,"");
                     await _mediator.Send(command, stoppingToken);
                 }
             }

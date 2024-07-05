@@ -11,6 +11,6 @@ namespace OrderManagement.ApplicationLayer
         Task DeleteOrderByIdAsync(Guid id);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task<IEnumerable<Order>> GetOrdersByUserAsync(string orderId);
-        Task UpdateOrderStatusById(Guid id);
+        Task UpdateOrderStatusById(Guid id, string status);
     }
 }

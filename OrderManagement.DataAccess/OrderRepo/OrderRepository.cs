@@ -1,4 +1,5 @@
-﻿using OrderManagement.DomainLayer.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderManagement.DomainLayer.Entities;
 
 namespace OrderManagement.DataAccess.OrderRepo
 {
@@ -20,11 +21,14 @@ namespace OrderManagement.DataAccess.OrderRepo
 
         public async Task DeleteAsync(Guid id)
         {
-            Order order = await _context.Orders.FindAsync(id);
+            Order order = await _context.Orders
+                                .Include(o => o.Products)
+                                .FirstOrDefaultAsync(o => o.Id == id);
             if (order != null)
             {
-                _context.Remove(order);
-                _context.SaveChanges();
+                _context.OrderProducts.RemoveRange(order.Products);
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
             }
             else
             {
@@ -34,18 +38,13 @@ namespace OrderManagement.DataAccess.OrderRepo
 
         public async Task<IEnumerable<Order>> GetAllAsync()
         {
-            return _context.Orders.ToList();
+            return await _context.Orders.Include(o => o.Products).ToListAsync();
 
-        }
-
-        public Task<List<Guid>> GetAllOrderIdsAsync()
-        {
-            throw null;
         }
 
         public async Task<Order> GetByIdAsync(Guid orderId)
         {
-            return await _context.Orders.FindAsync(orderId);
+            return await _context.Orders.Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByUserAsync(string userId)
@@ -59,14 +58,12 @@ namespace OrderManagement.DataAccess.OrderRepo
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task UpdateAsync(Guid orderId)
+        public async Task UpdateAsync(Guid orderId, string status)
         {
-            // correct implementation left..
             Order order = await _context.Orders.FindAsync(orderId);
+            order.Status = status;
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
-
-
     }
 }

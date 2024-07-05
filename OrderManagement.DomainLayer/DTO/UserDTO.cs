@@ -6,6 +6,5 @@
         public string Token { get; set; }
         public string ImageUrl { get; set; }
         public string Username { get; set; }
-
     }
 }

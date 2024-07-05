@@ -170,9 +170,6 @@ namespace OrderManagement.DataAccess.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<string>("Products")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
@@ -181,6 +178,22 @@ namespace OrderManagement.DataAccess.Migrations
                     b.HasIndex("CustId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("OrderManagement.DomainLayer.Entities.OrderProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id", "ProductId");
+
+                    b.ToTable("OrderProducts");
                 });
 
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.User", b =>
@@ -325,6 +338,22 @@ namespace OrderManagement.DataAccess.Migrations
                         .HasForeignKey("CustId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OrderManagement.DomainLayer.Entities.OrderProduct", b =>
+                {
+                    b.HasOne("OrderManagement.DomainLayer.Entities.Order", "Order")
+                        .WithMany("Products")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("OrderManagement.DomainLayer.Entities.Order", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.User", b =>
