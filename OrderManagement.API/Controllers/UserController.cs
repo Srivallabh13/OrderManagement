@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OrderManagement.ApplicationLayer.MediatR;
 using OrderManagement.ApplicationLayer.UserMediatR;
+using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
 
 namespace OrderManagement.API.Controllers
@@ -31,10 +32,10 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
-        public async Task<Unit> Update(User user)
+        [Route("update/{id}")]
+        public async Task<User> Update(string id, UpdateUserDTO user)
         {
-            return await _mediator.Send(new UpdateUser.Command(user));
+            return await _mediator.Send(new UpdateUser.Command(id, user));
         }
 
         [HttpDelete]

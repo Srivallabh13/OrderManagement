@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using OrderManagement.DataAccess.UserRepo;
+using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,25 +12,26 @@ namespace OrderManagement.ApplicationLayer.UserMediatR
 {
     public class UpdateUser
     {
-        public class Command: IRequest<Unit>
+        public class Command: IRequest<User>
         {
-            public User user { get; }
-            public Command(User user)
+            public UpdateUserDTO user { get; }
+            public string id { get; }
+            public Command(string id, UpdateUserDTO user)
             {
                 this.user = user;
+                this.id = id;
             }
         }
-        public class Handler : IRequestHandler<Command, Unit>
+        public class Handler : IRequestHandler<Command, User>
         {
             public UserRepository _userRepository { get; }
             public Handler(UserRepository userRepository)
             {
                 _userRepository = userRepository;
             }
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<User> Handle(Command request, CancellationToken cancellationToken)
             {
-                await _userRepository.UpdateAsync(request.user);
-                return Unit.Value;
+                 return await _userRepository.UpdateAsync(request.id, request.user);
             }
         }
     }
