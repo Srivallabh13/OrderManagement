@@ -2,6 +2,7 @@
 using MediatR;
 using OrderManagement.ApplicationLayer;
 using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.OrderRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,28 +15,37 @@ namespace OrderManagement.ApplicationLayer.MediatR
     {
         public class Command : IRequest<Unit>
         {
-            public Guid Id { get; set; }
+            public int Id { get; set; }
             public string Status { get; set; }
-            public Command(Guid orderId, string status)
+            public Command(int orderId, string status)
             {
                 Id = orderId;
                 Status = status;
             }
 
-
         }
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private readonly OrderService _orderService;
-            public Handler(OrderService orderService)
+            private readonly OrderRepository _orderRepository;
+
+            public Handler(OrderRepository orderRepository)
             {
-                _orderService = orderService;
+                _orderRepository = orderRepository;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                await _orderService.UpdateOrderStatusById(request.Id, request.Status);
-                return Unit.Value;
+                int id= request.Id;
+                string status = request.Status;
+                try
+                {
+                    await _orderRepository.UpdateAsync(id, status);
+                    return Unit.Value;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while updating the order status for order ID: {id},{ex.Message}"); 
+                }
             }
 
         }

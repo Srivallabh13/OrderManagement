@@ -46,9 +46,13 @@ namespace OrderManagement.API
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(GetAllOrders).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(GetAllUsers).Assembly));
             //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            builder.Services.AddTransient<OrderService>();
             builder.Services.AddTransient<OrderRepository>();
             builder.Services.AddTransient<UserRepository>();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -63,7 +67,7 @@ namespace OrderManagement.API
 
             app.UseAuthorization();
 
-
+            
             app.MapControllers();
 
             app.Run();

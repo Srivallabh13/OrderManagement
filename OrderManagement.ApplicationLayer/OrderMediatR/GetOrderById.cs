@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using OrderManagement.DataAccess.OrderRepo;
 using OrderManagement.DomainLayer.Entities;
 namespace OrderManagement.ApplicationLayer.MediatR
 {
@@ -6,22 +7,32 @@ namespace OrderManagement.ApplicationLayer.MediatR
     {
         public class Query : IRequest<Order>
         {
-            public Guid Id { get; set; }
-            public Query(Guid id)
+            public int Id { get; set; }
+            public Query(int id)
             {
                 Id = id;
             }
         }
         public class Handler : IRequestHandler<Query, Order>
         {
-            private readonly OrderService _orderService;
-            public Handler(OrderService orderService)
+            private readonly OrderRepository _orderRepository;
+
+            public Handler(OrderRepository orderRepository)
             {
-                _orderService = orderService;
+                _orderRepository = orderRepository;
             }
             public async Task<Order> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _orderService.GetOrderByIdAsync(request.Id);
+                int orderId = request.Id;
+
+                try
+                {
+                    return await _orderRepository.GetByIdAsync(orderId);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while fetching the order with ID: {orderId},{ex.Message}");
+                }
             }
         }
     }

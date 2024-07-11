@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Identity.Client;
+using OrderManagement.DataAccess.OrderRepo;
 using OrderManagement.DataAccess.UserRepo;
 using System;
 using System.Collections.Generic;
@@ -24,14 +25,16 @@ namespace OrderManagement.ApplicationLayer.UserMediatR
         public class Handler : IRequestHandler<Command, Unit>
         {
             private readonly UserRepository _userRepository;
-
-            public Handler(UserRepository userRepository)
+            private readonly OrderRepository _orderRepository;
+            public Handler(UserRepository userRepository, OrderRepository orderRepository)
             {
                 _userRepository = userRepository;
+                _orderRepository = orderRepository;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+                await _orderRepository.DeleteOrderByUserId(request.Id);
                 await _userRepository.DeleteAsync(request.Id);
                 return Unit.Value;
             }
