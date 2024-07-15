@@ -1,16 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
 using System.Net;
-using System.Text;
+using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace OrderManagement.DataAccess.Email
 {
     public class EmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
+        private readonly ILogger<EmailSender> _logger;
+
+        public EmailSender(ILogger<EmailSender> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string message)
         {
             var mail = "srivallabhjoshi13@gmail.com";
 
@@ -19,7 +24,32 @@ namespace OrderManagement.DataAccess.Email
                 EnableSsl = true,
                 Credentials = new NetworkCredential(mail, "vvriadlmiaevqsgf")
             };
-            return client.SendMailAsync(new MailMessage(from: mail, to: email, subject, message));
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(mail),
+                Subject = subject,
+                Body = message,
+                IsBodyHtml = true,
+            };
+
+            mailMessage.To.Add(email);
+
+            try
+            {
+                await client.SendMailAsync(mailMessage);
+                _logger.LogInformation($"Email sent to {email} with subject {subject}.");
+            }
+            catch (SmtpException smtpEx)
+            {
+                _logger.LogError(smtpEx, $"SMTP error occurred while sending email to {email}.");
+                throw new Exception("SMTP error occurred while sending email.", smtpEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while sending email to {email}.");
+                throw new Exception("An error occurred while sending email.", ex);
+            }
         }
     }
 }

@@ -157,9 +157,11 @@ namespace OrderManagement.DataAccess.Migrations
 
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.Order", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CustId")
                         .HasColumnType("nvarchar(450)");
@@ -182,8 +184,8 @@ namespace OrderManagement.DataAccess.Migrations
 
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.OrderProduct", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -335,7 +337,8 @@ namespace OrderManagement.DataAccess.Migrations
                 {
                     b.HasOne("OrderManagement.DomainLayer.Entities.User", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("CustId");
+                        .HasForeignKey("CustId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("User");
                 });

@@ -1,48 +1,99 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OrderManagement.ApplicationLayer.MediatR;
 using OrderManagement.ApplicationLayer.UserMediatR;
+using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OrderManagement.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    [Route("api/[controller]")]
+    //[AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public UserController(IMediator mediator)
+        private readonly ILogger<UserController> _logger;
+
+        public UserController(IMediator mediator, ILogger<UserController> logger)
         {
-            this._mediator = mediator;
+            _mediator = mediator;
+            _logger = logger;
         }
+
         [HttpGet]
-        public async Task<IEnumerable<User>> GetAll()
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
-            return await _mediator.Send(new GetAllUsers.Query());
-        }
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<User> GetById(string id) 
-        {
-            return await _mediator.Send(new GetUserById.Query(id));
-        }
-
-        [HttpPut]
-        [Route("update")]
-        public async Task<Unit> Update(User user)
-        {
-            return await _mediator.Send(new UpdateUser.Command(user));
+            try
+            {
+                return Ok(await _mediator.Send(new GetAllUsers.Query()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all users.");
+                return StatusCode(500, new { message = "An error occurred while fetching all users." });
+            }
         }
 
-        [HttpDelete]
-        [Route("delete/{id}")]
-        public async Task Delete(string id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetById(string id)
         {
-            await _mediator.Send(new DeleteUser.Command(id));
+            try
+            {
+                var user = await _mediator.Send(new GetUserById.Query(id));
+                if (user == null)
+                {
+                    _logger.LogWarning($"User with ID {id} not found.");
+                    return NotFound(new { message = "User not found." });
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while fetching the user with ID: {id}.");
+                return StatusCode(500, new { message = "An error occurred while fetching the user" });
+            }
         }
 
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<User>> Update(string id, UpdateUserDTO user)
+        {
+            try
+            {
+                var updatedUser = await _mediator.Send(new UpdateUser.Command(id, user));
+                if (updatedUser == null)
+                {
+                    _logger.LogWarning($"User with ID {id} not found.");
+                    return NotFound(new { message = "User not found." });
+                }
+                return Ok(updatedUser);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while updating the user with ID: {id}.");
+                return StatusCode(500, new { message = "An error occurred while updating the user" });
+            }
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteUser.Command(id));
+                return StatusCode(200, new { message = "User deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while deleting the user with ID: {id}.");
+                return StatusCode(500, new { message = "An error occurred while deleting the user" });
+            }
+        }   
     }
 }

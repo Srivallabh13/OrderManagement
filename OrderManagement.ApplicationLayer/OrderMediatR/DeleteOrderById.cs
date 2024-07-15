@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using OrderManagement.DataAccess.OrderRepo;
 
 namespace OrderManagement.ApplicationLayer.MediatR
 {
@@ -6,24 +7,32 @@ namespace OrderManagement.ApplicationLayer.MediatR
     {
         public class Command : IRequest<Unit>
         {
-            public Guid Id { get; set; }
-            public Command(Guid id)
+            public int Id { get; set; }
+            public Command(int id)
             {
                 this.Id = id;
             }
         }
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private readonly OrderService _orderService;
-            public Handler(OrderService orderService)
+            private readonly OrderRepository _orderRepository;
+            public Handler(OrderRepository orderRepository)
             {
-                _orderService = orderService;
+                _orderRepository = orderRepository;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                await _orderService.DeleteOrderByIdAsync(request.Id);
-                return Unit.Value;
+                int id = request.Id;
+                try
+                {
+                    await _orderRepository.DeleteAsync(id);
+                    return Unit.Value;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while deleting the order with ID: {id}, {ex.Message} .");
+                }
             }
 
         }
