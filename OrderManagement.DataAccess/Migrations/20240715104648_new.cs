@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OrderManagement.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,7 @@ namespace OrderManagement.DataAccess.Migrations
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PinCode = table.Column<int>(type: "int", nullable: false),
                     IsClient = table.Column<bool>(type: "bit", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -180,7 +181,8 @@ namespace OrderManagement.DataAccess.Migrations
                         name: "FK_Orders_AspNetUsers_CustId",
                         column: x => x.CustId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

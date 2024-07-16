@@ -34,7 +34,10 @@ namespace OrderManagement.ApplicationLayer.UserMediatR
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _userRepository.GetByIdAsync(request.Id);
+                if (user?.Orders != null || user?.Orders?.Count!=0) { 
                 await _orderRepository.DeleteOrderByUserId(request.Id);
+                }
                 await _userRepository.DeleteAsync(request.Id);
                 return Unit.Value;
             }

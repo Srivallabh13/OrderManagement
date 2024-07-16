@@ -12,6 +12,7 @@ namespace OrderManagement.DomainLayer.Entities
         public string City { get; set; }
         public int PinCode { get; set; }
         public bool IsClient { get; set; } = false;
+        public string Role { get; set; } = "User";
 
         public List<Order> Orders { get; set; }
 

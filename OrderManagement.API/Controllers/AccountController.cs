@@ -89,12 +89,12 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while trying to register a new user.");
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
+                return StatusCode(500, new { message = $"An error occurred while processing your request. {ex.Message}" });
             }
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
             try
@@ -121,7 +121,8 @@ namespace OrderManagement.API.Controllers
                 FullName = user.FullName,
                 ImageUrl = null,
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Role=user.Role
             };
         }
     }
