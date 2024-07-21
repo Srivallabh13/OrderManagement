@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using OrderManagement.DataAccess.OrderRepo;
 using OrderManagement.DomainLayer.Entities;
 namespace OrderManagement.ApplicationLayer.MediatR
 {
@@ -14,14 +15,14 @@ namespace OrderManagement.ApplicationLayer.MediatR
         }
         public class Handler : IRequestHandler<Query, Order>
         {
-            private readonly OrderService _orderService;
-            public Handler(OrderService orderService)
+            private readonly OrderRepository _orderRepository;
+            public Handler(OrderRepository orderRepository)
             {
-                _orderService = orderService;
+                _orderRepository = orderRepository;
             }
             public async Task<Order> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _orderService.GetOrderByIdAsync(request.Id);
+                return await _orderRepository.GetByIdAsync(request.Id);
             }
         }
     }

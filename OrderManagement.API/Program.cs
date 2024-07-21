@@ -46,7 +46,6 @@ namespace OrderManagement.API
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(GetAllOrders).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), typeof(GetAllUsers).Assembly));
             //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            builder.Services.AddTransient<OrderService>();
             builder.Services.AddTransient<OrderRepository>();
             builder.Services.AddTransient<UserRepository>();
             var app = builder.Build();
