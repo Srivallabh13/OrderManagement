@@ -7,10 +7,10 @@ namespace OrderManagement.ApplicationLayer.MediatR
     public class OrderStatusUpdateService : BackgroundService
     {
         private readonly IMediator _mediator;
-        private readonly IOrderRepository _orderRepository;
+        private readonly OrderRepository _orderRepository;
         private readonly TimeSpan _updateInterval = TimeSpan.FromHours(24);
 
-        public OrderStatusUpdateService(IMediator mediator, IOrderRepository orderRepository)
+        public OrderStatusUpdateService(IMediator mediator, OrderRepository orderRepository)
         {
             _mediator = mediator;
             _orderRepository = orderRepository;

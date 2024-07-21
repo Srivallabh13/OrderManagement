@@ -30,7 +30,7 @@ namespace OrderManagement.API.Controllers
             var user = await _userManager.FindByEmailAsync(loginDTO.Email);
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = "Invalid email or password" });
             }
             var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
 
@@ -38,7 +38,7 @@ namespace OrderManagement.API.Controllers
             {
                 return CreateUserObject(user);
             }
-            return Unauthorized();
+            return Unauthorized(new { message = "Invalid email or password" });
         }
 
         [AllowAnonymous]
@@ -81,10 +81,12 @@ namespace OrderManagement.API.Controllers
         {
             return new UserDTO
             {
+                Id = user.Id,
                 FullName = user.FullName,
                 ImageUrl = null,
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Role = user.Role
             };
         }
     }

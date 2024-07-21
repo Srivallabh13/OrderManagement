@@ -1,7 +1,7 @@
 ﻿using OrderManagement.DomainLayer.Entities;
 namespace OrderManagement.DataAccess.OrderRepo
 {
-    public interface IOrderRepository
+    internal interface IOrderRepository
     {
         Task<Order> AddAsync(Order order);
         Task<Order> GetByIdAsync(Guid orderId);

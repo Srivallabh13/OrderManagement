@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OrderManagement.DataAccess.Email;
 using OrderManagement.DomainLayer.Entities;
 
 namespace OrderManagement.DataAccess.OrderRepo
@@ -6,10 +7,12 @@ namespace OrderManagement.DataAccess.OrderRepo
     public class OrderRepository : IOrderRepository
     {
         private readonly OrderDbContext _context;
+        private readonly EmailSender emailSender;
 
-        public OrderRepository(OrderDbContext db)
+        public OrderRepository(OrderDbContext db, EmailSender emailSender)
         {
             _context = db;
+            this.emailSender = emailSender;
         }
 
         public async Task<Order> AddAsync(Order order)
@@ -61,7 +64,10 @@ namespace OrderManagement.DataAccess.OrderRepo
         public async Task UpdateAsync(Guid orderId, string status)
         {
             Order order = await _context.Orders.FindAsync(orderId);
+            User user = await _context.Users.FindAsync(order.CustId);
             order.Status = status;
+            string message = $"Your Order with orderId {orderId}, Your order successfully {status}!";
+            await emailSender.SendEmailAsync(user.Email, "Order Status", message);
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }

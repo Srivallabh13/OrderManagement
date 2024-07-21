@@ -45,5 +45,18 @@ namespace OrderManagement.API.Controllers
             await _mediator.Send(new DeleteUser.Command(id));
         }
 
+
+        [HttpPut("{id}/password")]
+        public async Task<bool> UpdatePassword(string id, UpdatePasswordDTO model)
+        {
+            return await _mediator.Send(new UpdatePassword.Command(id, model));
+        }
+        
+        [HttpPut("update/role/{id}")]
+        public async Task<Unit> UpdateRole(string id, string role)
+        {
+            var result = await _mediator.Send(new UpdateRole.Command(id, role));
+            return result;
+        }
     }
 }
