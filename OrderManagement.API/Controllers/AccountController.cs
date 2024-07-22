@@ -118,6 +118,7 @@ namespace OrderManagement.API.Controllers
         {
             return new UserDTO
             {
+                Id=user.Id,
                 FullName = user.FullName,
                 ImageUrl = null,
                 Username = user.UserName,

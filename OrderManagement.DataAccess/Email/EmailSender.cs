@@ -15,8 +15,9 @@ namespace OrderManagement.DataAccess.Email
             _logger = logger;
         }
 
-        public async Task SendEmailAsync(string email, string subject, string message)
+        public  Task SendEmailAsync(string email, string subject, string message)
         {
+
             var mail = "srivallabhjoshi13@gmail.com";
 
             var client = new SmtpClient("smtp.gmail.com", 587)
@@ -24,32 +25,40 @@ namespace OrderManagement.DataAccess.Email
                 EnableSsl = true,
                 Credentials = new NetworkCredential(mail, "vvriadlmiaevqsgf")
             };
+            return client.SendMailAsync(new MailMessage(from: mail, to: email, subject, message));
+            //var mail = "srivallabhjoshi13@gmail.com";
 
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(mail),
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true,
-            };
+            //var client = new SmtpClient("smtp.gmail.com", 587)
+            //{
+            //    EnableSsl = true,
+            //    Credentials = new NetworkCredential(mail, "vvriadlmiaevqsgf")
+            //};
 
-            mailMessage.To.Add(email);
+            //var mailMessage = new MailMessage
+            //{
+            //    From = new MailAddress(mail),
+            //    Subject = subject,
+            //    Body = message,
+            //    IsBodyHtml = true,
+            //};
 
-            try
-            {
-                await client.SendMailAsync(mailMessage);
-                _logger.LogInformation($"Email sent to {email} with subject {subject}.");
-            }
-            catch (SmtpException smtpEx)
-            {
-                _logger.LogError(smtpEx, $"SMTP error occurred while sending email to {email}.");
-                throw new Exception("SMTP error occurred while sending email.", smtpEx);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occurred while sending email to {email}.");
-                throw new Exception("An error occurred while sending email.", ex);
-            }
+            //mailMessage.To.Add(email);
+
+            //try
+            //{
+            //    await client.SendMailAsync(mailMessage);
+            //    _logger.LogInformation($"Email sent to {email} with subject {subject}.");
+            //}
+            //catch (SmtpException smtpEx)
+            //{
+            //    _logger.LogError(smtpEx, $"SMTP error occurred while sending email to {email}.");
+            //    throw new Exception("SMTP error occurred while sending email.", smtpEx);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(ex, $"An error occurred while sending email to {email}.");
+            //    throw new Exception("An error occurred while sending email.", ex);
+            //}
         }
     }
 }
