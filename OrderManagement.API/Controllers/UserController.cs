@@ -14,7 +14,7 @@ namespace OrderManagement.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[AllowAnonymous]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,7 +27,7 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
             try
@@ -40,10 +40,10 @@ namespace OrderManagement.API.Controllers
                 return StatusCode(500, new { message = "An error occurred while fetching all users." });
             }
         }
-
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(string id)
-        {
+        {   
             try
             {
                 var user = await _mediator.Send(new GetUserById.Query(id));
@@ -57,10 +57,10 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while fetching the user with ID: {id}.");
-                return StatusCode(500, new { message = "An error occurred while fetching the user" });
+                return StatusCode(500, new { message = $"An error occurred while fetching the user,{ex.Message}" });
             }
         }
-
+        //[Authorize]
         [HttpPut("update/{id}")]
         public async Task<ActionResult<User>> Update(string id, UpdateUserDTO user)
         {
@@ -77,9 +77,10 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while updating the user with ID: {id}.");
-                return StatusCode(500, new { message = "An error occurred while updating the user" });
+                return StatusCode(500, new { message = $"An error occurred while updating the user, {ex.Message}" });
             }
         }
+        //[Authorize]
 
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult> Delete(string id)
@@ -92,7 +93,7 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while deleting the user with ID: {id}.");
-                return StatusCode(500, new { message = "An error occurred while deleting the user" });
+                return StatusCode(500, new { message = $"An error occurred while deleting the user,{ex.Message}" });
             }
         }   
     }

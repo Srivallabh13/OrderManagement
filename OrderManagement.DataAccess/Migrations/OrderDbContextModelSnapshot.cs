@@ -259,6 +259,9 @@ namespace OrderManagement.DataAccess.Migrations
                     b.Property<int>("PinCode")
                         .HasColumnType("int");
 
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -338,7 +341,7 @@ namespace OrderManagement.DataAccess.Migrations
                     b.HasOne("OrderManagement.DomainLayer.Entities.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("CustId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });

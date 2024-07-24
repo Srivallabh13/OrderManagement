@@ -66,11 +66,7 @@ namespace OrderManagement.DataAccess.OrderRepo
                                     .Where(o => o.CustId == userId)
                                     .ToListAsync();
 
-                if (orders == null || orders.Count == 0)
-                {
-                    throw new Exception("No orders found for the given user ID.");
-                }
-
+               
                 // Remove related products and orders
                 foreach (var order in orders)
                 {
@@ -79,11 +75,12 @@ namespace OrderManagement.DataAccess.OrderRepo
                 }
 
                 await _context.SaveChangesAsync();
+                
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while deleting the orders for user ID: {userId}.");
-                throw new Exception("An error occurred while deleting the orders.", ex);
+                throw new Exception($"An error occurred while deleting the orders.{ex.Message}" );
             }
         }
 

@@ -12,8 +12,8 @@ using OrderManagement.DataAccess;
 namespace OrderManagement.DataAccess.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20240710073054_Init")]
-    partial class Init
+    [Migration("20240715104648_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -262,6 +262,9 @@ namespace OrderManagement.DataAccess.Migrations
                     b.Property<int>("PinCode")
                         .HasColumnType("int");
 
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -341,7 +344,7 @@ namespace OrderManagement.DataAccess.Migrations
                     b.HasOne("OrderManagement.DomainLayer.Entities.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("CustId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
