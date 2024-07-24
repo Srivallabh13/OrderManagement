@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace OrderManagement.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    [AllowAnonymous]
+    [ApiController]
+    [Authorize]
+    //[AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,7 +28,7 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
             try
@@ -95,6 +96,14 @@ namespace OrderManagement.API.Controllers
                 _logger.LogError(ex, $"An error occurred while deleting the user with ID: {id}.");
                 return StatusCode(500, new { message = $"An error occurred while deleting the user,{ex.Message}" });
             }
-        }   
+        }
+
+        [HttpPut("update/role/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<Unit> UpdateRole(string id, string role)
+        {
+            var result = await _mediator.Send(new UpdateRole.Command(id, role));
+            return result;
+        }
     }
 }

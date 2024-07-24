@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OrderManagement.DataAccess.Email;
 using OrderManagement.DomainLayer.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,11 @@ namespace OrderManagement.DataAccess.OrderRepo
     public class OrderRepository : IOrderRepository
     {
         private readonly OrderDbContext _context;
+        private readonly EmailSender emailSender;
         private readonly ILogger<OrderRepository> _logger;
 
-        public OrderRepository(OrderDbContext db, ILogger<OrderRepository> logger)
+
+        public OrderRepository(OrderDbContext db, ILogger<OrderRepository> logger, EmailSender emailSender)
         {
             _context = db;
             _logger = logger;
@@ -179,12 +182,15 @@ namespace OrderManagement.DataAccess.OrderRepo
             try
             {
                 Order order = await _context.Orders.FindAsync(orderId);
-                if (order == null)
+                User user = await _context.Users.FindAsync(order.CustId);
+                if (order == null || user == null)
                 {
-                    throw new Exception("Order not found");
+                    throw new Exception("Order/User not found");
                 }
 
                 order.Status = status;
+                string message = $"Your Order with orderId {orderId}, Your order successfully {status}!";
+                await emailSender.SendEmailAsync(user.Email, "Order Status", message);
                 _context.Orders.Update(order);
                 await _context.SaveChangesAsync();
             }

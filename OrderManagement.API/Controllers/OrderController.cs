@@ -26,6 +26,7 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<Order>>> GetAll()
         {
             try
@@ -87,7 +88,9 @@ namespace OrderManagement.API.Controllers
             }
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete]
+        [Route("delete/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
             try
@@ -102,7 +105,9 @@ namespace OrderManagement.API.Controllers
             }
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut]
+        [Route("update/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Order>> Update(int id, string status)
         {
             try

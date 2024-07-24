@@ -123,7 +123,7 @@ namespace OrderManagement.API.Controllers
                 ImageUrl = null,
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                Role=user.Role
+                Role = user.Role
             };
         }
     }

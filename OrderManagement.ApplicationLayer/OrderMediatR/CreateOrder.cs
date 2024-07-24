@@ -47,7 +47,7 @@ namespace OrderManagement.ApplicationLayer.MediatR
                     order.User.Orders.Add(order);
                     await _orderRepository.AddAsync(order);
 
-                    string message = "Thank you for ordering from our platform, Your order is confirmed!";
+                    string message = $"Thank you {user.FullName}, for ordering from our platform, Your order is confirmed! You have Ordered {order.Products.Count} products. Now you can track you Order with this id: {order.Id}.\nWe will inform you as soon as the order gets shipped via email.\n Keep Shopping!\n For any queries contact us on srivallabhjoshi13@gmail.com\"";
                     await _emailSender.SendEmailAsync(user.Email, "Order Confirmed", message);
 
                     return order;

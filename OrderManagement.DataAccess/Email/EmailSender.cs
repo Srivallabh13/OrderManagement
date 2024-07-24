@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OrderManagement.DataAccess.OrderRepo;
 
 namespace OrderManagement.DataAccess.Email
 {

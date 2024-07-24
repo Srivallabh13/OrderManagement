@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OrderManagement.DomainLayer.DTO;
 using OrderManagement.DomainLayer.Entities;
@@ -11,12 +12,14 @@ namespace OrderManagement.DataAccess.UserRepo
     public class UserRepository : IUserRepository
     {
         private readonly OrderDbContext _context;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(OrderDbContext db, ILogger<UserRepository> logger)
+        public UserRepository(OrderDbContext db, ILogger<UserRepository> logger, UserManager<User> userManager)
         {
             _context = db;
             _logger = logger;
+            _userManager = userManager;
         }
 
         public UserRepository() { }
@@ -114,6 +117,61 @@ namespace OrderManagement.DataAccess.UserRepo
                 _logger.LogError(ex, $"An error occurred while updating the user with ID: {id}.");
                 throw new Exception("An error occurred while updating the user.", ex);
             }
+        }
+
+        public async Task<bool> UpdatePasswordAsync(string id, UpdatePasswordDTO model)
+        {
+            if (model == null || string.IsNullOrEmpty(id))
+            {
+                throw new Exception("Invalid input.");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            try
+            {
+                var verifyResult = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+                if (!verifyResult)
+                {
+                    return false;
+                }
+
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(ex, "Invalid password hash format for user with ID {UserId}", id);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while updating the password for user with ID {UserId}", id);
+                return false;
+            }
+
+        }
+
+        public async Task UpdateRoleAsync(string id, string role)
+        {
+            var user = await GetByIdAsync(id);
+            if (user == null)
+            {
+                throw new Exception("user not found");
+            }
+            user.Role = role;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
     }
 }
