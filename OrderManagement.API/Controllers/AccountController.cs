@@ -53,7 +53,7 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while trying to log in user {loginDTO.Email}.");
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
+                return StatusCode(500, new { message = $"An error occurred while processing your request.{ex.Message}" });
             }
         }
 
@@ -94,7 +94,7 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
             try
@@ -110,7 +110,7 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while trying to get the current user.");
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
+                return StatusCode(500, new { message = $"An error occurred while processing your request.{ex.Message}" });
             }
         }
 
@@ -118,6 +118,7 @@ namespace OrderManagement.API.Controllers
         {
             return new UserDTO
             {
+                Id=user.Id,
                 FullName = user.FullName,
                 ImageUrl = null,
                 Username = user.UserName,

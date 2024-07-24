@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace OrderManagement.API.Controllers
 {
-    [AllowAnonymous]
+    //[AllowAnonymous]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
@@ -26,6 +27,7 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<Order>>> GetAll()
         {
             try
@@ -35,11 +37,12 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all orders.");
-                return StatusCode(500, new { message = "An error occurred while fetching all orders." });
+                return StatusCode(500, new { message = $"An error occurred while fetching all orders.{ex.Message}" });
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("{id}")]
         public async Task<ActionResult<Order>> GetById(int id)
         {
             try
@@ -54,11 +57,12 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while fetching the order with ID: {id}.");
-                return StatusCode(500, new { message = "An error occurred while fetching the order" });
+                return StatusCode(500, new { message = $"An error occurred while fetching the order.{ex.Message}" });
             }
         }
 
-        [HttpGet("user/{userId}")]
+        [HttpGet]
+        [Route("user/{userId}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetByUser(string userId)
         {
             try
@@ -68,11 +72,12 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while fetching orders for user ID: {userId}.");
-                return StatusCode(500, new { message = "Invalid user id" });
+                return StatusCode(500, new { message = $"Invalid user id.{ex.Message}" });
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost]
+        [Route("create")]
         public async Task<ActionResult<Order>> Create(OrderDTO order)
         {
             try
@@ -83,11 +88,13 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while creating the order.");
-                return StatusCode(500, new { message = "An error occurred while creating the order." });
+                return StatusCode(500, new { message = $"An error occurred while creating the order.{ex.Message}" });
             }
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete]
+        [Route("delete/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
             try
@@ -98,11 +105,13 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while deleting the order with ID: {id}.");
-                return StatusCode(500, new { message = "An error occurred while deleting the order" });
+                return StatusCode(500, new { message = $"An error occurred while deleting the order{ex.Message}" });
             }
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut]
+        [Route("update/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Order>> Update(int id, string status)
         {
             try
@@ -114,7 +123,7 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while updating the order with ID: {id}.");
-                return StatusCode(500, new { message = "An error occurred while updating the order." });
+                return StatusCode(500, new { message = $"An error occurred while updating the order.{ex.Message}" });
             }
         }
     }

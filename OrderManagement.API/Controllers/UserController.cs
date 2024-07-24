@@ -14,7 +14,8 @@ namespace OrderManagement.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [AllowAnonymous]
+    //[AllowAnonymous]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,7 +28,7 @@ namespace OrderManagement.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
             try
@@ -37,11 +38,11 @@ namespace OrderManagement.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all users.");
-                return StatusCode(500, new { message = "An error occurred while fetching all users." });
+                return StatusCode(500, new { message = $"An error occurred while fetching all users.{ex.Message}" });
             }
         }
-        //[Authorize]
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("{id}")]
         public async Task<ActionResult<User>> GetById(string id)
         {   
             try
@@ -60,8 +61,8 @@ namespace OrderManagement.API.Controllers
                 return StatusCode(500, new { message = $"An error occurred while fetching the user,{ex.Message}" });
             }
         }
-        //[Authorize]
-        [HttpPut("update/{id}")]
+        [HttpPut]
+        [Route("update/{id}")]
         public async Task<ActionResult<User>> Update(string id, UpdateUserDTO user)
         {
             try
@@ -82,7 +83,8 @@ namespace OrderManagement.API.Controllers
         }
         //[Authorize]
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete]
+        [Route("delete/{id}")]
         public async Task<ActionResult> Delete(string id)
         {
             try
@@ -95,6 +97,19 @@ namespace OrderManagement.API.Controllers
                 _logger.LogError(ex, $"An error occurred while deleting the user with ID: {id}.");
                 return StatusCode(500, new { message = $"An error occurred while deleting the user,{ex.Message}" });
             }
-        }   
+        }
+        [HttpPut("{id}/password")]
+        public async Task<bool> UpdatePassword(string id, UpdatePasswordDTO model)
+        {
+            return await _mediator.Send(new UpdatePassword.Command(id, model));
+        }
+
+        [HttpPut("update/role/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<Unit> UpdateRole(string id, string role)
+        {
+            var result = await _mediator.Send(new UpdateRole.Command(id, role));
+            return result;
+        }
     }
 }

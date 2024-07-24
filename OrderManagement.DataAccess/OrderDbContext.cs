@@ -15,7 +15,7 @@ namespace OrderManagement.DataAccess
         //{
         //    optionsBuilder.UseSqlServer("Data Source = (localdb)\\mssqllocaldb; Initial Catalog = OrderDbV1; Integrated Security = true");
         //}
-
+            
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }

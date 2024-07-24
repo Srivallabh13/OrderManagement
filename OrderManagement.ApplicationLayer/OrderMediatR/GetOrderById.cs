@@ -23,15 +23,13 @@ namespace OrderManagement.ApplicationLayer.MediatR
             }
             public async Task<Order> Handle(Query request, CancellationToken cancellationToken)
             {
-                int orderId = request.Id;
-
                 try
                 {
-                    return await _orderRepository.GetByIdAsync(orderId);
+                    return await _orderRepository.GetByIdAsync(request.Id);
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"An error occurred while fetching the order with ID: {orderId},{ex.Message}");
+                    throw new Exception($"An error occurred while fetching the order with ID: {request.Id},{ex.Message}");
                 }
             }
         }

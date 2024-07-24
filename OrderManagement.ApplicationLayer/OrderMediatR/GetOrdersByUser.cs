@@ -38,7 +38,7 @@ namespace OrderManagement.ApplicationLayer.MediatR
                 }
                 catch (Exception ex)
                 {
-                    throw new ApplicationException($"An error occurred while fetching orders for user ID: {userId}.", ex);
+                    throw new ApplicationException($"An error occurred while fetching orders for user ID: {userId},{ex.Message}", ex);
                 }
             }
         }

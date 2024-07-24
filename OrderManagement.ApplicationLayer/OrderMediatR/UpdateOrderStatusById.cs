@@ -35,16 +35,14 @@ namespace OrderManagement.ApplicationLayer.MediatR
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                int id= request.Id;
-                string status = request.Status;
                 try
                 {
-                    await _orderRepository.UpdateAsync(id, status);
+                    await _orderRepository.UpdateAsync(request.Id, request.Status);
                     return Unit.Value;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"An error occurred while updating the order status for order ID: {id},{ex.Message}"); 
+                    throw new Exception($"An error occurred while updating the order status for order ID: {request.Id},{ex.Message}"); 
                 }
             }
 

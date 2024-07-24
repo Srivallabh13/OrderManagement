@@ -43,12 +43,12 @@ namespace OrderManagement.DataAccess.Email
             catch (SmtpException smtpEx)
             {
                 _logger.LogError(smtpEx, $"SMTP error occurred while sending email to {email}.");
-                throw new Exception("SMTP error occurred while sending email.", smtpEx);
+                throw new Exception($"SMTP error occurred while sending email.{smtpEx.Message}", smtpEx);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while sending email to {email}.");
-                throw new Exception("An error occurred while sending email.", ex);
+                throw new Exception($"An error occurred while sending email.{ex.Message}", ex);
             }
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using OrderManagement.API.Services;
 using OrderManagement.DataAccess;
 using OrderManagement.DomainLayer.Entities;
+using System.Security.Claims;
 using System.Text;
 
 namespace OrderManagement.API.Extensions
@@ -38,7 +39,9 @@ namespace OrderManagement.API.Extensions
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = key, 
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        RoleClaimType = ClaimTypes.Role
+
                     };
                 });
             services.AddScoped<TokenService>();

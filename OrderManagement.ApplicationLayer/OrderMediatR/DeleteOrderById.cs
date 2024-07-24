@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Azure.Core;
+using MediatR;
 using OrderManagement.DataAccess.OrderRepo;
 
 namespace OrderManagement.ApplicationLayer.MediatR
@@ -23,15 +24,14 @@ namespace OrderManagement.ApplicationLayer.MediatR
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                int id = request.Id;
                 try
                 {
-                    await _orderRepository.DeleteAsync(id);
+                    await _orderRepository.DeleteAsync(request.Id);
                     return Unit.Value;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"An error occurred while deleting the order with ID: {id}, {ex.Message} .");
+                    throw new Exception($"An error occurred while deleting the order with ID: {request.Id}, {ex.Message} .");
                 }
             }
 

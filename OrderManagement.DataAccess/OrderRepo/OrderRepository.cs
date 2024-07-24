@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OrderManagement.DataAccess.Email;
 using OrderManagement.DomainLayer.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,14 @@ namespace OrderManagement.DataAccess.OrderRepo
     public class OrderRepository : IOrderRepository
     {
         private readonly OrderDbContext _context;
+        private readonly EmailSender emailSender;
+
         private readonly ILogger<OrderRepository> _logger;
 
-        public OrderRepository(OrderDbContext db, ILogger<OrderRepository> logger)
+        public OrderRepository(OrderDbContext db, EmailSender emailSender, ILogger<OrderRepository> logger)
         {
             _context = db;
+            this.emailSender = emailSender;
             _logger = logger;
         }
         
@@ -29,7 +33,7 @@ namespace OrderManagement.DataAccess.OrderRepo
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding an order.");
-                throw new Exception("An error occurred while adding the order.", ex);
+                throw new Exception($"An error occurred while adding the order.{ex.Message}", ex);
             }
         }
 
@@ -52,7 +56,7 @@ namespace OrderManagement.DataAccess.OrderRepo
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while deleting the order with ID: {id}.");
-                throw new Exception("An error occurred while deleting the order.", ex);
+                throw new Exception($"An error occurred while deleting the order.{ex.Message}", ex);
             }
         }
 
@@ -83,37 +87,7 @@ namespace OrderManagement.DataAccess.OrderRepo
                 throw new Exception($"An error occurred while deleting the orders.{ex.Message}" );
             }
         }
-
-        //public async Task DeleteOrdersByUserId(string userId)
-        //{
-        //    try
-        //    {
-        //        // Fetch all orders related to the given user ID
-        //        var orders = await _context.Orders
-        //                            .Include(o => o.Products)
-        //                            .Where(o => o.CustId == userId)
-        //                            .ToListAsync();
-
-        //        if (orders == null || orders.Count == 0)
-        //        {
-        //            throw new Exception("No orders found for the given user ID.");
-        //        }
-
-        //        // Remove related products and orders
-        //        foreach (var order in orders)
-        //        {
-        //            _context.OrderProducts.RemoveRange(order.Products);
-        //            _context.Orders.Remove(order);
-        //        }
-
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while deleting the orders for user ID: {userId}.");
-        //        throw new Exception("An error occurred while deleting the orders.", ex);
-        //    }
-        //}
+      
 
 
         public async Task<IEnumerable<Order>> GetAllAsync()
@@ -125,7 +99,7 @@ namespace OrderManagement.DataAccess.OrderRepo
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all orders.");
-                throw new Exception("An error occurred while fetching all orders.", ex);
+                throw new Exception($"An error occurred while fetching all orders.{ex.Message}");
             }
         }
 
@@ -138,7 +112,7 @@ namespace OrderManagement.DataAccess.OrderRepo
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while fetching the order with ID: {orderId}.");
-                throw new Exception("An error occurred while fetching the order.", ex);
+                throw new Exception($"An error occurred while fetching the order.{ex.Message}", ex);
             }
         }
 
@@ -157,7 +131,7 @@ namespace OrderManagement.DataAccess.OrderRepo
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while fetching orders for user ID: {userId}.");
-                throw new Exception("An error occurred while fetching orders for the user.", ex);
+                throw new Exception($"An error occurred while fetching orders for the user.{ex.Message}", ex);
             }
         }
 
@@ -170,7 +144,7 @@ namespace OrderManagement.DataAccess.OrderRepo
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while fetching the user with ID: {userId}.");
-                throw new Exception("An error occurred while fetching the user.", ex);
+                throw new Exception($"An error occurred while fetching the user.{ex.Message}", ex);
             }
         }
 
@@ -179,19 +153,24 @@ namespace OrderManagement.DataAccess.OrderRepo
             try
             {
                 Order order = await _context.Orders.FindAsync(orderId);
+                User user = await _context.Users.FindAsync(order.CustId);
+
                 if (order == null)
                 {
                     throw new Exception("Order not found");
                 }
 
                 order.Status = status;
+                string message = $"Your Order with orderId {orderId}, Your order successfully {status}!";
+                await emailSender.SendEmailAsync(user.Email, "Order Status", message);
+
                 _context.Orders.Update(order);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while updating the order status for order ID: {orderId}.");
-                throw new Exception("An error occurred while updating the order status.", ex);
+                throw new Exception($"An error occurred while updating the order status.{ex.Message}", ex);
             }
         }
 

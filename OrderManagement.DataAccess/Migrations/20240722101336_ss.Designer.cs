@@ -12,8 +12,8 @@ using OrderManagement.DataAccess;
 namespace OrderManagement.DataAccess.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20240715104648_new")]
-    partial class @new
+    [Migration("20240722101336_ss")]
+    partial class ss
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
