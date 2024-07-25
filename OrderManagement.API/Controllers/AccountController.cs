@@ -59,6 +59,7 @@ namespace OrderManagement.API.Controllers
                 FullName = registerDto.FullName,
                 Email = registerDto.Email,
                 UserName = registerDto.Username,
+                IsClient = registerDto.IsClient,
             };
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 

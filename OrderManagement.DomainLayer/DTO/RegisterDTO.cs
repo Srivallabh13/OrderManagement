@@ -15,6 +15,7 @@ namespace OrderManagement.DomainLayer.DTO
         public string FullName { get; set; }
         [Required]
         public string Username { get; set; }
+        public bool IsClient { get; set; } = false;
 
     }
 }
