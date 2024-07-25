@@ -14,6 +14,6 @@ namespace OrderManagement.DomainLayer.Entities
         public bool IsClient { get; set; } = false;
         public string Role { get; set; } = "User";
         public List<Order> Orders { get; set; }
-
+        public ICollection<Photo> Photos { get; set; }
     }
 }

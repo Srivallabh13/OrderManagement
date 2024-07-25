@@ -19,6 +19,7 @@ namespace OrderManagement.DataAccess
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
+        public DbSet<Photo> Photos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,8 +29,13 @@ namespace OrderManagement.DataAccess
                 .HasOne(o => o.User) //Each Order has one User.
                 .WithMany(u => u.Orders) // Each User can have many Orders.
                 .HasForeignKey(o => o.CustId)  //The foreign key on the Order entity is CustId.
-                .HasPrincipalKey(o => o.Id);  //The principal key on the User entity is Id.
+                .HasPrincipalKey(o => o.Id)  //The principal key on the User entity is Id.
+                .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Photo>()
+                .HasOne<User>()
+                .WithMany(u => u.Photos)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<OrderProduct>()
                 .HasKey(op => new { op.Id, op.ProductId }); 

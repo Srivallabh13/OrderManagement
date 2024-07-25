@@ -83,7 +83,7 @@ namespace OrderManagement.API.Controllers
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                ImageUrl = null,
+                ImageUrl = user.ImageUrl,
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
                 Role = user.Role

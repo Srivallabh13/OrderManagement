@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using OrderManagement.API.Extensions;
 using OrderManagement.ApplicationLayer;
 using OrderManagement.ApplicationLayer.MediatR;
@@ -36,8 +37,39 @@ namespace OrderManagement.API
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityService(builder.Configuration);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Description = "Please enter your token with his format:'Bearer YOUR_TOKEN'",
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement 
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
+            });
+
+
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddDbContext<OrderDbContext>(opt =>
             {
@@ -48,6 +80,7 @@ namespace OrderManagement.API
             //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             builder.Services.AddTransient<OrderRepository>();
             builder.Services.AddTransient<UserRepository>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -56,12 +89,11 @@ namespace OrderManagement.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseRouting(); 
+            app.UseRouting();
             app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

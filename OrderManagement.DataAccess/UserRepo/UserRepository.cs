@@ -44,7 +44,7 @@ namespace OrderManagement.DataAccess.UserRepo
 
         public async Task<User> GetByIdAsync(string userId)
         {
-            return await _context.Users.FindAsync(userId);
+            return await _context.Users.Include(u=>u.Photos).FirstOrDefaultAsync(u => u.Id == userId);
 
         }
 

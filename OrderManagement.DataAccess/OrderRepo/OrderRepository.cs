@@ -71,5 +71,26 @@ namespace OrderManagement.DataAccess.OrderRepo
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteOrderByUserId(string userId)
+        {
+            try
+            {
+                var orders = await _context.Orders.Include(o => o.Products).Where(o => o.CustId == userId).ToListAsync();
+
+                foreach (var order in orders)
+                {
+                    _context.OrderProducts.RemoveRange(order.Products);
+                    _context.Orders.Remove(order);
+                }
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while deleting the orders.{ex.Message}");
+            }
+        }
     }
 }

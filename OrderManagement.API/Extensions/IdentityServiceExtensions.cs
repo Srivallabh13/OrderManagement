@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OrderManagement.API.Services;
+using OrderManagement.ApplicationLayer.Photos;
+using OrderManagement.ApplicationLayer.Photos.Interfaces;
 using OrderManagement.DataAccess;
 using OrderManagement.DomainLayer.Entities;
 using System.Security.Claims;
@@ -44,6 +46,8 @@ namespace OrderManagement.API.Extensions
                     };
                 });
             services.AddScoped<TokenService>();
+            services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             return services;
         }
     }
