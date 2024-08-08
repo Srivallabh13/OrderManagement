@@ -2,6 +2,7 @@
 using MediatR;
 using OrderManagement.ApplicationLayer;
 using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.OrderRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,15 +27,15 @@ namespace OrderManagement.ApplicationLayer.MediatR
         }
         public class Handler : IRequestHandler<Command, Unit>
         {
-            private readonly OrderService _orderService;
-            public Handler(OrderService orderService)
+            private readonly OrderRepository _orderRepository;
+            public Handler(OrderRepository orderRepository)
             {
-                _orderService = orderService;
+                _orderRepository = orderRepository;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                await _orderService.UpdateOrderStatusById(request.Id, request.Status);
+                await _orderRepository.UpdateAsync(request.Id, request.Status);
                 return Unit.Value;
             }
 

@@ -7,8 +7,7 @@ using OrderManagement.DomainLayer.Entities;
 
 namespace OrderManagement.API.Controllers
 {
-    [AllowAnonymous]
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
@@ -19,7 +18,7 @@ namespace OrderManagement.API.Controllers
             this._mediator = mediator;
         }
         [HttpGet]
-
+        [Authorize(Roles = "admin")]
         public async Task<IEnumerable<Order>> GetAll()
         {
             return await _mediator.Send(new GetAllOrders.Query());
@@ -34,6 +33,7 @@ namespace OrderManagement.API.Controllers
         
         [HttpGet]
         [Route("user/{userId}")]
+
         public async Task<IEnumerable<Order>> GetByUser(string userId)
         {
             return await _mediator.Send(new GetOrdersByUser.Query(userId));
@@ -48,6 +48,7 @@ namespace OrderManagement.API.Controllers
 
         [HttpDelete]
         [Route("delete/{id}")]
+        [Authorize(Roles="admin")]
         public async Task<Unit> Delete(Guid id)
         {
             return await _mediator.Send(new DeleteOrderById.Command(id));
@@ -55,6 +56,7 @@ namespace OrderManagement.API.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
+        [Authorize(Roles="admin")]
         public async Task<Unit> Update(Guid id, string status)
         {
             return await _mediator.Send(new UpdateOrderStatusById.Command(id, status));

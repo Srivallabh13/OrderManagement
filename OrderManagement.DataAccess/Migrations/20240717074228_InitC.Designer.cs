@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OrderManagement.DataAccess;
 
@@ -11,9 +12,11 @@ using OrderManagement.DataAccess;
 namespace OrderManagement.DataAccess.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    partial class OrderDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240717074228_InitC")]
+    partial class InitC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,24 +199,6 @@ namespace OrderManagement.DataAccess.Migrations
                     b.ToTable("OrderProducts");
                 });
 
-            modelBuilder.Entity("OrderManagement.DomainLayer.Entities.Photo", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Photos");
-                });
-
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -356,8 +341,7 @@ namespace OrderManagement.DataAccess.Migrations
                 {
                     b.HasOne("OrderManagement.DomainLayer.Entities.User", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("CustId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CustId");
 
                     b.Navigation("User");
                 });
@@ -373,14 +357,6 @@ namespace OrderManagement.DataAccess.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderManagement.DomainLayer.Entities.Photo", b =>
-                {
-                    b.HasOne("OrderManagement.DomainLayer.Entities.User", null)
-                        .WithMany("Photos")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.Order", b =>
                 {
                     b.Navigation("Products");
@@ -389,8 +365,6 @@ namespace OrderManagement.DataAccess.Migrations
             modelBuilder.Entity("OrderManagement.DomainLayer.Entities.User", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

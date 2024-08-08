@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OrderManagement.API.Services;
+using OrderManagement.ApplicationLayer.Photos;
+using OrderManagement.ApplicationLayer.Photos.Interfaces;
 using OrderManagement.DataAccess;
 using OrderManagement.DomainLayer.Entities;
+using System.Security.Claims;
 using System.Text;
 
 namespace OrderManagement.API.Extensions
@@ -38,10 +41,13 @@ namespace OrderManagement.API.Extensions
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = key, 
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        RoleClaimType = ClaimTypes.Role
                     };
                 });
             services.AddScoped<TokenService>();
+            services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             return services;
         }
     }

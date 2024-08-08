@@ -30,7 +30,11 @@ namespace OrderManagement.API.Controllers
             var user = await _userManager.FindByEmailAsync(loginDTO.Email);
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = "Invalid email or password" });
+            }
+            if(user.IsClient == true)
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
             }
             var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
 
@@ -38,7 +42,30 @@ namespace OrderManagement.API.Controllers
             {
                 return CreateUserObject(user);
             }
-            return Unauthorized();
+            return Unauthorized(new { message = "Invalid email or password" });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("client/login")]
+        public async Task<ActionResult<UserDTO>> ClientLogin(LoginDTO loginDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(loginDTO.Email);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
+            }
+            if(user.IsClient==false)
+            {
+                return Unauthorized(new { message = "You cannot login with this account!"});
+            }
+            var result = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
+
+            if (result)
+            {
+                return CreateUserObject(user);
+            }
+            return Unauthorized(new { message = "Invalid email or password" });
         }
 
         [AllowAnonymous]
@@ -69,6 +96,40 @@ namespace OrderManagement.API.Controllers
             return BadRequest(result.Errors);
         }
 
+        [AllowAnonymous]
+        [HttpPost("client/register")]
+        public async Task<ActionResult<UserDTO>> ClientRegister(RegisterDTO registerDto)
+        {
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
+            {
+                return BadRequest("Username is already taken");
+            }
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
+            {
+                return BadRequest("Email is already taken");
+            }
+            if(registerDto.IsClient == false)
+            {
+                return BadRequest("Cannot process your request.");
+            }
+
+            var user = new User
+            {
+                FullName = registerDto.FullName,
+                Email = registerDto.Email,
+                UserName = registerDto.Username,
+                IsClient = true,
+            };
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (result.Succeeded)
+            {
+                return CreateUserObject(user);
+            }
+            return BadRequest(result.Errors);
+        }
+
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
@@ -81,10 +142,12 @@ namespace OrderManagement.API.Controllers
         {
             return new UserDTO
             {
+                Id = user.Id,
                 FullName = user.FullName,
-                ImageUrl = null,
+                ImageUrl = user.ImageUrl,
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Role = user.Role
             };
         }
     }
